@@ -2,7 +2,7 @@
 
 ## Intro
 
-Basic example of running AlphaFold on Summit, utilizing the pre-built Singularity container. 
+Basic example of running AlphaFold on Summit, utilizing the pre-built Singularity container.
 
 NOTE: This assumes you have access to the OLCF's Summit Supercomputer.
 
@@ -14,9 +14,10 @@ It is worth noting that the container we provide ONLY has the ML/DL portions of 
 
 Outline of what you can find here:
 
-* Singularity container with ML/DL portions of AlphaFold (where to get it on the filesystem)
-* Tweaked run_alphafold.py (essentially comments out alphafold.data and alphafold.relax portions, leaving the model portion)
-* Example application run
+* `alphafold1103.sif` : Singularity container with ML/DL portions of AlphaFold.
+* `run_alphafold_summit_dl.py` : Adjusted run_alphafold.py. Essentially comments out alphafold.data and alphafold.relax portions, leaving the model portion.
+* `run_af_summit_dl.sh` : Simple wrapper to provide inputs and launch alphafold.
+* `batch_submit.sh` : Job submission script example
 
 Thank you to [Dr. Mu Gao](https://biosciences.gatech.edu/people/mu_gao) for his outstanding assistance, enabling us to share these basic examples. 
 
