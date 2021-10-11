@@ -30,7 +30,7 @@ NOTE: It was built on top of the `cuda-ppc64le:11.0.3-cudnn8-devel-ubuntu18.04` 
 
 ## Running a basic example
 
-Our provided `batch_submit.sh` can be adjusted as needed. Within that, we provide a target list of sequences to run against (`casp14_fm.lst` in this case). In addtion, we also pass an output directory for the results. Those, in turn, get fed to the `run_af_summit_dl.sh` AlphaFold wrapper (along with some other inputs).
+Our provided `batch_submit.sh` can be adjusted as needed. Within that, we provide a target list of sequences to run against (`casp14_fm.lst`) and an output directory. Those, in turn, get fed to the `run_af_summit_dl.sh` AlphaFold wrapper script.
 
 The data for the example can be found here: `/gpfs/alpine/stf007/world-shared/AlphaFold/`.
 
