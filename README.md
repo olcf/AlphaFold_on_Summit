@@ -1,5 +1,7 @@
 # AlphaFold_on_Summit
 
+## Intro
+
 Basic example of running AlphaFold on Summit, utilizing the pre-built Singularity container. 
 
 The primary thing being provided here is the container. A common issue for users is the the inability to build containers targeting Summit, themselves, due to the ppcle64 architecture of Summit. 
