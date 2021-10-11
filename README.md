@@ -21,7 +21,7 @@ Outline of what you can find here:
 * `run_af_summit_dl.sh` : Simple wrapper to provide inputs and launch alphafold.
 * `batch_submit.sh` : Job submission script example
 
-Thank you to [Dr. Mu Gao](https://biosciences.gatech.edu/people/mu_gao) for his outstanding assistance, enabling us to share these basic examples. 
+Thank you to [Dr. Mu Gao](https://sites.gatech.edu/cssb/mu-gao/) for his outstanding assistance, enabling us to share these basic examples. 
 
 ## Where to get the container
 
