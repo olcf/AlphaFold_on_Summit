@@ -44,6 +44,8 @@ af_dir=/gpfs/alpine/stf007/world-shared/AlphaFold/alphafold
 data_dir=/gpfs/alpine/stf007/world-shared/AlphaFold/alphafold_databases
 ```
 
+<!---`fea_dir` is the directory containing the pre-calculated features.  CHECK THIS --->
+
 You too can run against these as a test, as they are enaled for world-read. You will need to change your project allocation and the output directory in the `batch_submit.sh` script. 
 
 Creating other datasets to run against is left up to you at this point. But, this should help you run AF against data that is ready for the ML/DL phase.
