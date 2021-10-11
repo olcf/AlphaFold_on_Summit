@@ -26,6 +26,6 @@ Thank you to [Dr. Mu Gao](https://biosciences.gatech.edu/people/mu_gao) for his 
 * `/gpfs/alpine/stf007/world-shared/AlphaFold/alphafold1103.sif` 
 * You may copy it to your directory or use it from the above location
 
-NOTE: It was built on top of the cuda-ppc64le:11.0.3-cudnn8-devel-ubuntu18.04 base container.
+NOTE: It was built on top of the `cuda-ppc64le:11.0.3-cudnn8-devel-ubuntu18.04` base container.
 
 ## 
