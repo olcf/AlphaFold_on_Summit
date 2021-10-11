@@ -4,6 +4,8 @@
 
 Basic example of running AlphaFold on Summit, utilizing the pre-built Singularity container. 
 
+NOTE: This assumes you have access to the OLCF's Summit Supercomputer.
+
 The primary thing being provided here is the container. A common issue for users is the the inability to build containers targeting Summit, themselves, due to the ppcle64 architecture of Summit. 
 
 Most users do not have proper access to a system in which they can build for this architecture. We also do not currently enable users to build containers on Summit, directly, BUT we do provide the Singularity runtime. Therefore, we have decided to provide this AlphaFold container to users, as a pre-built container.
