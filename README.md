@@ -49,3 +49,20 @@ data_dir=/gpfs/alpine/stf007/world-shared/AlphaFold/alphafold_databases
 You too can run against these as a test, as they are enaled for world-read. You will need to change your project allocation and the output directory in the `batch_submit.sh` script. 
 
 Creating other datasets to run against is left up to you at this point. But, this should help you run AF against data that is ready for the ML/DL phase.
+
+## References and Notes
+
+**References:**
+
+Jumper et al. Highly accurate protein structure prediction with AlphaFold. Nature 2021. [Paper](https://www.nature.com/articles/s41586-021-03819-2)
+
+Original [github](https://github.com/deepmind/alphafold)
+
+**License:**
+
+While the code for AlphaFold is licensed under Apache 2.0 license, the model parameters themselves are licensed under a Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license, and are for non-commercial use only:
+
+[original AlphaFold2 license disclaimer](https://github.com/deepmind/alphafold#license-and-disclaimer)
+
+
+
