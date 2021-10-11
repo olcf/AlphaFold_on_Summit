@@ -1,0 +1,220 @@
+# Copyright 2021 DeepMind Technologies Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+FROM docker.io/nvidia/cuda-ppc64le:11.0.3-cudnn8-devel-ubuntu18.04
+# FROM directive resets ARGS, so we specify again (the value is retained if
+# previously set).
+
+ENV TZ=Etc/UTC
+ENV LANG=C.UTF-8
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Use bash to support string substitution.
+#SHELL ["/bin/bash", "-c"]
+
+#
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      build-essential \
+      cuda-command-line-tools-11-0 \
+      openjdk-11-jdk-headless zip unzip \
+      git \
+      python3-dev \
+      tzdata \
+      wget \
+      gpg \
+      gcc-8 \
+      g++-8  libc6-dev libc-dev libstdc++-6-dev \ 
+      pkg-config \
+      libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/* 
+
+# install cmake 3.15
+RUN wget -q -P /tmp https://cmake.org/files/v3.15/cmake-3.15.7.tar.gz && \
+    cd /tmp && \
+    tar -xzf cmake-3.15.7.tar.gz && \
+    cd cmake-3.15.7 && \
+    ./bootstrap && make && make install && \
+    rm -rf /tmp/cmake-3.15.7
+
+#RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+#      build-essential \
+#      cmake \
+#      cuda-command-line-tools-11-0 \
+#      openjdk-11-jdk-headless zip unzip \
+#      git \
+#      hmmer \
+#      python3-dev \
+#      kalign \
+#      tzdata \
+#      wget \
+#      gcc-8 \
+#      g++-8  libc6-dev libc-dev \
+#    && rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 700 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+
+
+# Compile HHsuite from source.
+#RUN git clone --branch v3.3.0 https://github.com/soedinglab/hh-suite.git /tmp/hh-suite \
+#    && mkdir /tmp/hh-suite/build \
+#    && cd /tmp/hh-suite/build \
+#    && cmake -DCMAKE_INSTALL_PREFIX=/opt/hhsuite .. \
+#    && make -j 4 && make install \
+#    && ln -s /opt/hhsuite/bin/* /usr/bin \
+#    && cd /tmp \
+#    && rm -rf /tmp/hh-suite
+
+# Install Miniconda package manger.
+ARG CONDA_VER=py37_4.9.2
+RUN wget -q -P /tmp \
+  https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VER}-Linux-$(uname -m).sh \
+    && bash /tmp/Miniconda3-${CONDA_VER}-Linux-$(uname -m).sh -b -p /opt/conda \
+    && rm /tmp/Miniconda3-${CONDA_VER}-Linux-$(uname -m).sh
+
+# Install conda and pip packages.
+ENV PATH="/opt/conda/bin:$PATH"
+#ARG CONDA_REPO=https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda/
+#RUN conda config --prepend channels $CONDA_REPO \
+RUN conda install -y -c conda-forge numpy==1.19.5 scipy==1.7.0 six wheel pip \
+    && conda install -y -c conda-forge cudatoolkit==11.0.3 mock \
+    && pip install \
+         biopython==1.79 \
+         dm-haiku==0.0.4 \
+         docker==5.0.0 \
+         immutabledict==2.0.0 \
+         absl-py==0.13.0 \
+         ml-collections==0.1.0 
+
+ENV LD_LIBRARY_PATH="/opt/conda/lib:$LD_LIBRARY_PATH"
+
+# install bazel
+RUN wget -q -P /tmp https://github.com/bazelbuild/bazel/releases/download/3.7.2/bazel-3.7.2-dist.zip && \
+    cd /tmp && unzip -d bazel bazel-3.7.2-dist.zip && \
+    cd /tmp/bazel && env EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk" bash ./compile.sh && \
+    cp /tmp/bazel/output/bazel /usr/bin && rm -rf /tmp/bazel
+
+# Install tensorflow 
+
+#RUN conda config --prepend channels $CONDA_REPO \
+#    && conda install -y -c conda-forge \
+#      openmm=7.5.1 \
+#      cudatoolkit==11.0.3 \
+#      pdbfixer \
+#      numpy scipy six wheel \
+#      pip
+
+## Install Miniconda package manger.
+#RUN wget -q -P /tmp  https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-ppc64le.sh 
+#RUN bash /tmp/Miniconda3-latest-Linux-ppc64le.sh -b -p /opt/conda 
+#RUN rm /tmp/Miniconda3-latest-Linux-ppc64le.sh
+#
+## Install conda packages.
+#ENV PATH="/opt/conda/bin:$PATH"
+#RUN conda update -qy conda \
+#    && conda install -y -c conda-forge \
+#      openmm=7.5.1 \
+#      cudatoolkit==11.0.3 \
+#      pdbfixer \
+#      pip \
+#      python=3.7
+
+
+# install openmm ?
+
+# install pdbfixer ?
+
+
+# install jax
+RUN cd /tmp && git clone https://github.com/google/jax && cd /tmp/jax && git checkout 1db53b11755a86d69238b4e999ad011d1142e23c && \
+    python build/build.py --bazel_path=/usr/bin/bazel --noenable_mkl_dnn --enable_cuda --cuda_path /usr/local/cuda --cudnn_path /usr --target_cpu=ppc && \
+    pip install dist/*.whl && \
+    rm -rf /tmp/jax 
+
+RUN pip install jax && \
+    conda install -y -c conda-forge opt_einsum==3.3.0 
+
+
+# install chex and tree and keras
+RUN cd /tmp && git clone https://github.com/deepmind/tree && cd /tmp/tree && git checkout 0.1.6 && python setup.py install && rm -rf /tmp/tree
+RUN cd /tmp && git clone https://github.com/deepmind/chex && cd /tmp/chex && git checkout v0.0.7 && python setup.py install && rm -rf /tmp/chex
+
+# install tensorflow
+## weird keras requirement. tensorflow complained so adding this.
+RUN pip install keras_preprocessing --no-deps
+
+RUN cd /tmp && \
+    wget -q -P /tmp https://github.com/tensorflow/tensorflow/archive/refs/tags/v2.5.0.zip && \
+    unzip -d /tmp v2.5.0.zip && \
+    mv /tmp/tensorflow-2.5.0 /tmp/tensorflow
+#    git checkout r2.5
+
+## need this to skip the interactive ./configure for tensorflow
+RUN echo $'build --action_env PYTHON_BIN_PATH="/opt/conda/bin/python3"\n\
+build --action_env PYTHON_LIB_PATH="/opt/conda/lib/python3.7/site-packages"\n\
+build --python_path="/opt/conda/bin/python3"\n\
+build:xla --define with_xla_support=true\n\
+build --config=xla\n\
+build --action_env CUDA_TOOLKIT_PATH="/usr/local/cuda-11.0"\n\
+build --action_env TF_CUDA_COMPUTE_CAPABILITIES="3.5,7.0"\n\
+build --action_env LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64"\n\
+build --action_env GCC_HOST_COMPILER_PATH="/usr/bin/powerpc64le-linux-gnu-gcc-8"\n\
+build --config=cuda\n\
+build --action_env TF_CONFIGURE_IOS="0"\n\
+build:opt --copt=-mcpu=power9\n\
+build:opt --copt=-mtune=power9\n\
+build:opt --host_copt=-mcpu=power9\n\
+build:opt --define with_default_optimizations=true\n\
+test --flaky_test_attempts=3\n\
+test --test_size_filters=small,medium\n\
+test --test_env=LD_LIBRARY_PATH\n\
+test:v1 --test_tag_filters=-benchmark-test,-no_oss,-no_gpu,-oss_serial\n\
+test:v1 --build_tag_filters=-benchmark-test,-no_oss,-no_gpu\n\
+test:v2 --test_tag_filters=-benchmark-test,-no_oss,-no_gpu,-oss_serial,-v1only\n\
+test:v2 --build_tag_filters=-benchmark-test,-no_oss,-no_gpu,-v1only' > /tmp/tensorflow/.tf_configure.bazelrc
+
+RUN cd /tmp/tensorflow && /usr/bin/bazel build --config=v2 //tensorflow/tools/pip_package:build_pip_package 
+RUN cd /tmp/tensorflow && ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg  
+RUN pip install /tmp/tensorflow_pkg/tensorflow-2.5.0-cp37-cp37m-linux_ppc64le.whl
+
+
+COPY . /app/alphafold
+RUN wget -q -P /app/alphafold/alphafold/common/ \
+  https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
+
+## Install pip packages.
+#RUN pip3 install --upgrade pip \
+#    && pip3 install -r /app/alphafold/requirements.txt \
+#    && pip3 install --upgrade jax jaxlib==0.1.69+cuda110 -f \
+#      https://storage.googleapis.com/jax-releases/jax_releases.html
+
+## Apply OpenMM patch.
+#WORKDIR /opt/conda/lib/python3.7/site-packages
+#RUN patch -p0 < /app/alphafold/docker/openmm.patch
+
+# We need to run `ldconfig` first to ensure GPUs are visible, due to some quirk
+# with Debian. See https://github.com/NVIDIA/nvidia-docker/issues/1399 for
+# details.
+# ENTRYPOINT does not support easily running multiple commands, so instead we
+# write a shell script to wrap them up.
+WORKDIR /app/alphafold
+
+
+
+RUN echo $'#!/bin/bash\n\
+ldconfig\n\
+python /app/alphafold/run_alphafold.py "$@"' > /app/run_alphafold.sh \
+  && chmod +x /app/run_alphafold.sh
+ENTRYPOINT ["/app/run_alphafold.sh"]
+
