@@ -2,7 +2,7 @@
 
 ## Intro
 
-Basic example of running AlphaFold on Summit, utilizing the pre-built Singularity container.
+Basic example of running AlphaFold2 on Summit, utilizing the pre-built Singularity container.
 
 NOTE: This assumes you have access to the OLCF's Summit Supercomputer.
 
