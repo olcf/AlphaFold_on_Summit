@@ -28,4 +28,20 @@ Thank you to [Dr. Mu Gao](https://biosciences.gatech.edu/people/mu_gao) for his 
 
 NOTE: It was built on top of the `cuda-ppc64le:11.0.3-cudnn8-devel-ubuntu18.04` base container.
 
-## 
+## Running a basic example
+
+Our provided `batch_submit.sh` can be adjusted as needed. Within that, we provide a target list of sequences to run against (`casp14_fm.lst` in this case). In addtion, we also pass an output directory for the results. Those, in turn, get fed to the `run_af_summit_dl.sh` AlphaFold wrapper (along with some other inputs).
+
+The data for the example can be found here: `/gpfs/alpine/stf007/world-shared/AlphaFold/`.
+
+You can see we set these variables in the `run_af_summit_dl.sh` script:
+
+```
+fea_dir=/gpfs/alpine/stf007/world-shared/AlphaFold/casp14
+af_dir=/gpfs/alpine/stf007/world-shared/AlphaFold/alphafold
+data_dir=/gpfs/alpine/stf007/world-shared/AlphaFold/alphafold_databases
+```
+
+You too can run against these as a test, as they are enaled for world-read. You will need to change your project allocation and the output directory in the `batch_submit.sh` script. 
+
+Creating other datasets to run against is left up to you at this point. But, this should help you run AF against data that is ready for the ML/DL phase.
