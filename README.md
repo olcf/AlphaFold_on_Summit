@@ -34,7 +34,7 @@ NOTE: It was built on top of the `cuda-ppc64le:11.0.3-cudnn8-devel-ubuntu18.04` 
 
 ## Generating the pickled input feature files
 
-WIP
+We generated all the input features on the Andes cluster. That is because all the codes required to generate these features only use CPUs, no GPUs, and Summit's nodes are too expensive a resource to use to run this type of CPU-based preprocessing. To do this, you will need to install HHSuite, Kalign, and HMMER on Andes. All of these are pretty easy to build. We then ran all these HMM-generating codes on several nodes of Andes. We also had to replicate the reduced BFD dataset and the other sequence datasets
 
 ## Running the basic example
 
